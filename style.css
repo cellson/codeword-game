@@ -1,0 +1,64 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    border: 2px #111 solid;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cell-number {
+    position: absolute;
+    top: 3px;
+    left: 4px;
+    font-size: 11px;
+    color: #444;
+}
+
+.cell-letter {
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.cell.black {
+    background-color: #111;
+}
+
+.cell.selected {
+    background-color: #b3d9ff;
+}
+
+.cell.selected.solved {
+    background-color: #b3b4ff;
+}
+
+.cell.solved {
+  background-color: #c8f7c5;
+}
+
+#win-message {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
