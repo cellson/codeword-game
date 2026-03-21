@@ -40,7 +40,16 @@ const gamePuzzle = puzzleFactory(puzzleLayout, puzzleKey);
 
 
 function checkWin() {
-    return gamePuzzle.rows.every(row => row.cells.every(cell => gamePuzzle.guesses[cell.keyNumber] === puzzleKey.alphabetKey[cell.keyNumber]));
+    for (let row of gamePuzzle.rows) {
+        for (let cell of row.cells) {
+            if (cell.keyNumber === 0) continue; // skip black cells
+            if (gamePuzzle.guesses[cell.keyNumber] !== puzzleKey.alphabetKey[cell.keyNumber]) {
+                return false; // if any cell is not solved, return false
+            }
+        }
+    }
+    return true;
+
 }
 
 function renderGrid() {
@@ -54,11 +63,14 @@ function renderGrid() {
         row.cells.forEach(cell => {
             const cellDiv = document.createElement("div");
             cellDiv.classList.add("cell");
+            container.appendChild(rowDiv);
+            rowDiv.appendChild(cellDiv);
 
             if (cell.keyNumber === 0) {
                 cellDiv.classList.add("black");
+                return; // skip further rendering for black cells
             }
-            if (gamePuzzle.guesses[cell.keyNumber] === puzzleKey.alphabetKey[cell.keyNumber] && cell.keyNumber !== 0) {
+            if (gamePuzzle.guesses[cell.keyNumber] === puzzleKey.alphabetKey[cell.keyNumber]) {
                 cellDiv.classList.add("solved");
             }
             if (cell.keyNumber === selectedNumber && !solved) {
@@ -81,8 +93,7 @@ function renderGrid() {
             letterDiv.classList.add("cell-letter");
             letterDiv.textContent = gamePuzzle.guesses[cell.keyNumber] || "";
             
-            container.appendChild(rowDiv);
-            rowDiv.appendChild(cellDiv);
+            
             cellDiv.appendChild(letterDiv);
             cellDiv.appendChild(numberSpan);
                         
