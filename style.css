@@ -10,12 +10,14 @@ body {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+    border: 2px #111 solid;
 }
 
 #key-container {
     display: grid;
     grid-template-columns: repeat(13, 1fr);
     margin-top: 20px;
+    border: 2px #111 solid;
 }
 
 .row {
