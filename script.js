@@ -1,4 +1,4 @@
-import {Cell, Row, Puzzle} from './puzzle_grid.js';
+import {Cell, Row, Puzzle, Key} from './classes.js';
 
 // 2D array representing the puzzle grid. 
 // Zeros are black cells, and other numbers correspond to letters in the key
@@ -9,14 +9,14 @@ const puzzleLayout = [
     [5,4,2,6,0],
     [0,0,4,0,0]
 ]
-// dictionary of number keys to letter values
-const puzzleKey = {1:'C', 2:'E', 3:'L', 4:'S', 5:'U', 6:'D'}
+
+const puzzleKey = new Key({1:'C', 2:'E', 3:'L', 4:'S', 5:'U', 6:'D'})
 
 let selectedNumber = null;
 let solved = false;
 
 // A function to iterate over the 2d puzzle array and return a Puzzle object
-function puzzleFactory(layout, alphabetKey) {
+function puzzleFactory(layout, key) {
     const rows = layout.map((rowData, rowIndex) => {
         const cells = rowData.map((val, colIndex) => {
             return new Cell({
@@ -27,14 +27,20 @@ function puzzleFactory(layout, alphabetKey) {
         });
         return new Row(cells);
     })
-    return new Puzzle(alphabetKey, rows)
+    return new Puzzle(key, rows)
 }
+
+function renderPuzzle() {
+    renderGrid();
+    renderKey();
+}
+
 
 const gamePuzzle = puzzleFactory(puzzleLayout, puzzleKey);
 
 
 function checkWin() {
-    return gamePuzzle.rows.every(row => row.cells.every(cell => gamePuzzle.guesses[cell.keyNumber] === puzzleKey[cell.keyNumber]));
+    return gamePuzzle.rows.every(row => row.cells.every(cell => gamePuzzle.guesses[cell.keyNumber] === puzzleKey.alphabetKey[cell.keyNumber]));
 }
 
 function renderGrid() {
@@ -52,7 +58,7 @@ function renderGrid() {
             if (cell.keyNumber === 0) {
                 cellDiv.classList.add("black");
             }
-            if (gamePuzzle.guesses[cell.keyNumber] === puzzleKey[cell.keyNumber] && cell.keyNumber !== 0) {
+            if (gamePuzzle.guesses[cell.keyNumber] === puzzleKey.alphabetKey[cell.keyNumber] && cell.keyNumber !== 0) {
                 cellDiv.classList.add("solved");
             }
             if (cell.keyNumber === selectedNumber && !solved) {
@@ -64,7 +70,7 @@ function renderGrid() {
             cellDiv.addEventListener("click", () => {
                 if (solved) return;
                 selectedNumber = cell.keyNumber;
-                renderGrid();
+                renderPuzzle();
             });
 
             const numberSpan = document.createElement("span");
@@ -88,6 +94,43 @@ function renderGrid() {
     winMessage.textContent = solved ? "You solved it! 🎉" : "";
 }
 
+function renderKey() {
+    const keyContainer = document.getElementById("key-container");
+    keyContainer.innerHTML = "";
+    for (let i = 1; i <= 26; i++) {
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("cell");
+
+        if (gamePuzzle.guesses[i] === puzzleKey.alphabetKey[i]) {
+            cellDiv.classList.add("solved");
+        }
+        if (i === selectedNumber && !solved) {
+            cellDiv.classList.add("selected");
+        }
+        if (i === selectedNumber && solved) {
+            cellDiv.classList.add("solved", "selected");
+        }
+
+        cellDiv.addEventListener("click", () => {
+            if (solved) return;
+            selectedNumber = i;
+            renderPuzzle();
+        });
+
+        const numberSpan = document.createElement("span");
+        numberSpan.classList.add("cell-number");
+        numberSpan.textContent = i;
+
+        const letterDiv = document.createElement("div");
+        letterDiv.classList.add("cell-letter");
+        letterDiv.textContent = gamePuzzle.guesses[i] || "";
+
+        cellDiv.appendChild(letterDiv);
+        cellDiv.appendChild(numberSpan);
+        keyContainer.appendChild(cellDiv);
+    }
+}
+
 document.addEventListener("keydown", (event) => {
     if (solved || selectedNumber === null) return;
 
@@ -104,7 +147,7 @@ document.addEventListener("keydown", (event) => {
         selectedNumber = null;
     }
 
-    renderGrid();
+    renderPuzzle();
 });
 
-renderGrid();
+renderPuzzle();

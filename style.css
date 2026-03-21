@@ -12,6 +12,12 @@ body {
     margin-top: 20px;
 }
 
+#key-container {
+    display: grid;
+    grid-template-columns: repeat(13, 1fr);
+    margin-top: 20px;
+}
+
 .row {
     display: flex;
     flex-direction: row;
