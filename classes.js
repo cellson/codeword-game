@@ -33,3 +33,9 @@ export class Puzzle {
         });
     }
 }
+
+export class Key {
+    constructor(alphabetKey = {}) {
+        this.alphabetKey = alphabetKey;
+    }
+}
