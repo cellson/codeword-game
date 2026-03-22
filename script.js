@@ -2,15 +2,33 @@ import {Cell, Row, Puzzle, Key} from './classes.js';
 
 // 2D array representing the puzzle grid. 
 // Zeros are black cells, and other numbers correspond to letters in the key
-const puzzleLayout = [
-    [0,0,1,0,0],
-    [1,2,3,3,4],
-    [0,0,5,0,0],
-    [5,4,2,6,0],
-    [0,0,4,0,0]
-]
+// const puzzleLayout = [
+//     [0,0,1,0,0],
+//     [1,2,3,3,4],
+//     [0,0,5,0,0],
+//     [5,4,2,6,0],
+//     [0,0,4,0,0]
+// ]
 
-const puzzleKey = new Key({1:'C', 2:'E', 3:'L', 4:'S', 5:'U', 6:'D'})
+// const puzzleKey = new Key({1:'C', 2:'E', 3:'L', 4:'S', 5:'U', 6:'D'})
+
+const getPuzzle = async (puzzleName) => {
+    try {
+        const response = await fetch('puzzles.json');
+        const data = await response.json();
+        return data[puzzleName];
+    } catch (error) {
+        console.error("Could not fetch puzzle data:", error);
+    }
+};
+
+async function initializeGame() {
+    const puzzleData = await getPuzzle('puzzle027');
+    const puzzleLayout = puzzleData.layout;
+    const puzzleKey = new Key(puzzleData.key);
+    const puzzleClues = puzzleData.starterClues;
+    return { puzzleLayout, puzzleKey, puzzleClues };
+}
 
 let selectedNumber = null;
 let solved = false;
@@ -30,12 +48,17 @@ function puzzleFactory(layout, key) {
     return new Puzzle(key, rows)
 }
 
-function renderPuzzle() {
+async function renderPuzzle() {
+    for (let clue of puzzleClues) {
+        if (!gamePuzzle.guesses[clue]) {
+            gamePuzzle.guesses[clue] = puzzleKey.alphabetKey[clue];
+        }
+    }
     renderGrid();
     renderKey();
 }
 
-
+const { puzzleLayout, puzzleKey, puzzleClues } = await initializeGame();
 const gamePuzzle = puzzleFactory(puzzleLayout, puzzleKey);
 
 
