@@ -17,10 +17,10 @@ export class Row {
 }
 
 export class Puzzle {
-    constructor(key, rows = []) {
+    constructor(key, rows = [], guesses = {}) {
         this.key = key;
         this.rows = rows;
-        this.guesses = {};
+        this.guesses = guesses;
     }
 
     debugRender() {
